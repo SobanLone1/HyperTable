@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, send_file, request, redirect, url_for
 
 app = Flask(__name__)
 
@@ -8,7 +8,7 @@ users = []
 # Home page route where user can choose to register or login
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return send_file('index.html')  # Send the index.html file from the same folder as this script
 
 # Registration route
 @app.route('/register', methods=['POST'])
@@ -36,12 +36,12 @@ def login():
         # Simulate user authentication (in a real app, validate password, etc.)
         return redirect(url_for('main_program'))
 
-    return render_template('login.html')
+    return send_file('login.html')  # Send login.html from the same folder
 
 # Main program route
 @app.route('/main')
 def main_program():
-    return render_template('main_program.html')
+    return send_file('main_program.html')  # Send main_program.html from the same folder
 
 if __name__ == '__main__':
     app.run(debug=True)
