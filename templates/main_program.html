@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <title>Main Program</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            text-align: center;
+            color: #4A90E2;
+        }
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #4A90E2;
+            color: white;
+        }
+        td {
+            background-color: #f9f9f9;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        .delete-btn:hover {
+            background-color: #d32f2f;
+            
+        }
+        input[type="text"], input[type="email"], input[type="date"], input[type="number"], textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        input[type="radio"] {
+            margin-left: 10px;
+        }
+        label {
+            font-weight: bold;
+        }
+        .highlight {
+            border: 2px solid red;
+        }
+        button.view-btn, button.export-btn {
+            background-color: #2196F3;
+            padding: 5px 10px;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-right: 5px;
+        }
+        button.view-btn:hover {
+            background-color: #1976D2;
+        }
+        button.export-btn:hover {
+            background-color: #0D47A1;
+        }
+    </style>
+    </style>
+</head>
+<body>
+
+    <h1>Main Program</h1>
+
+    <!-- Button to show form -->
+    <button onclick="showForm()">+ Add New Record</button>
+
+    <!-- Form Container -->
+    <div class="form-container" id="formContainer" style="display: none;">
+        <h2>Add New Record</h2>
+        <form id="newRecordForm">
+            <!-- Fields for the form -->
+            <label for="firstName">First Name *</label>
+            <input type="text" id="firstName" name="firstName" required><br><br>
+
+            <label for="phoneNumber">Phone Number *</label>
+            <input type="text" id="phoneNumber" name="phoneNumber" required><br><br>
+
+            <label for="altPhoneNumber">Alt Phone Number</label>
+            <input type="text" id="altPhoneNumber" name="altPhoneNumber"><br><br>
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email"><br><br>
+
+            <label for="address">Address *</label>
+            <input type="text" id="address" name="address" required><br><br>
+
+            <label for="googleLocation">Google Location *</label>
+            <input type="text" id="googleLocation" name="googleLocation" required><br><br>
+
+            <!-- Rent/Sale Selection -->
+            <label>Rent/Sale:</label>
+            <input type="radio" id="rent" name="rentSale" value="rent" onclick="toggleRentSale()">
+            <label for="rent">Rent</label>
+            <input type="radio" id="sale" name="rentSale" value="sale" onclick="toggleRentSale()">
+            <label for="sale">Sale</label><br><br>
+
+            <div id="rentFields" style="display: none;">
+                <label for="fromDate">From Date:</label>
+                <input type="date" id="fromDate" name="fromDate"><br><br>
+                <label for="toDate">To Date:</label>
+                <input type="date" id="toDate" name="toDate"><br><br>
+            </div>
+
+            <label for="equipment">Equipment *</label>
+            <input type="text" id="equipment" name="equipment" required><br><br>
+
+            <label for="serialNumber">Serial No *</label>
+            <input type="text" id="serialNumber" name="serialNumber" required><br><br>
+
+            <label for="deliveryDate">Delivery Date:</label>
+            <input type="date" id="deliveryDate" name="deliveryDate"><br><br>
+
+            <label for="price">Price *</label>
+            <input type="number" id="price" name="price" required><br><br>
+
+            <label for="transportPrice">Transport Price *</label>
+            <input type="number" id="transportPrice" name="transportPrice" required><br><br>
+
+            <label for="totalPrice">Total Price:</label>
+            <input type="text" id="totalPrice" name="totalPrice" disabled><br><br>
+
+            <label for="notes">Notes</label>
+            <textarea id="notes" name="notes"></textarea><br><br>
+
+            <button type="submit">Submit</button>
+            <button type="button" onclick="cancelForm()">Cancel</button>
+        </form>
+    </div>
+
+    <!-- Table for displaying records -->
+    <table id="recordsTable">
+        <thead>
+            <tr>
+                <th>First Name</th>
+                <th>Phone Number</th>
+                <th>Alt Phone Number</th>
+                <th>Email</th>
+                <th>Address</th>
+                <th>Google Location</th>
+                <th>Rent/Sale</th>
+                <th>From Date</th>
+                <th>To Date</th>
+                <th>Equipment</th>
+                <th>Serial No</th>
+                <th>Delivery Date</th>
+                <th>Price</th>
+                <th>Transport Price</th>
+                <th>Total Price</th>
+                <th>Notes</th>
+                <th>Actions</th>
+                <th>Export</th>
+                <th>View</th>
+
+            </tr>
+        </thead>
+        <tbody id="recordsBody">
+            <!-- Dynamic records will be inserted here -->
+        </tbody>
+    </table>
+    <script>
+        // Dummy records for testing (normally from a server)
+        let records = JSON.parse(localStorage.getItem("records")) || [];
+    
+        // Show the form
+        function showForm() {
+            document.getElementById('formContainer').style.display = 'block';
+        }
+    
+        // Cancel form
+        function cancelForm() {
+            document.getElementById('formContainer').style.display = 'none';
+        }
+    
+        // Toggle Rent/Sale fields
+        function toggleRentSale() {
+            const rentFields = document.getElementById('rentFields');
+            if (document.getElementById('rent').checked) {
+                rentFields.style.display = 'block';
+            } else {
+                rentFields.style.display = 'none';
+            }
+        }
+    
+        // Calculate total price when both price and transport price are filled
+        function calculateTotalPrice() {
+            const price = parseFloat(document.getElementById('price').value) || 0;
+            const transportPrice = parseFloat(document.getElementById('transportPrice').value) || 0;
+            const totalPrice = price + transportPrice;
+            document.getElementById('totalPrice').value = totalPrice;
+        }
+    
+        // Listen for changes in price and transport price fields to calculate total price
+        document.getElementById('price').addEventListener('input', calculateTotalPrice);
+        document.getElementById('transportPrice').addEventListener('input', calculateTotalPrice);
+    
+        // Populate the table with records
+        function populateTable() {
+            const tableBody = document.getElementById('recordsBody');
+            tableBody.innerHTML = ''; // Clear existing rows
+    
+            records.forEach((record, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${record.firstName}</td>
+                    <td>${record.phoneNumber}</td>
+                    <td>${record.altPhoneNumber}</td>
+                    <td>${record.email}</td>
+                    <td>${record.address}</td>
+                    <td><a href="${record.googleLocation}" target="_blank">${record.googleLocation}</a></td>
+                    <td>${record.rentSale}</td>
+                    <td>${record.fromDate}</td>
+                    <td>${record.toDate}</td>
+                    <td>${record.equipment}</td>
+                    <td>${record.serialNumber}</td>
+                    <td>${record.deliveryDate}</td>
+                    <td>${record.price}</td>
+                    <td>${record.transportPrice}</td>
+                    <td>${record.totalPrice}</td>
+                    <td>${record.notes}</td>
+                    <td><button class="delete-btn" onclick="deleteRecord(${index})">Delete</button></td>
+                    <td><button class="export-btn" onclick="exportAllRecords()">Export All</button></td>
+                    <td><button class="view-btn" onclick="viewRecord(${index})">View</button></td>`;
+                tableBody.appendChild(row);
+            });
+        }
+    
+        // Delete a record
+        function deleteRecord(index) {
+            records.splice(index, 1); // Remove record
+            localStorage.setItem('records', JSON.stringify(records)); // Save updated records
+            populateTable(); // Re-populate the table
+        }
+    
+        // Export a record to Excel
+     // Export all records to Excel
+ function exportAllRecords() {
+    const data = [
+        [
+            'First Name', 'Phone Number', 'Alt Phone Number', 'Email', 'Address',
+            'Google Location', 'Rent/Sale', 'From Date', 'To Date', 'Equipment',
+            'Serial Number', 'Delivery Date', 'Price', 'Transport Price', 'Total Price', 'Notes'
+        ]
+    ];
+
+    records.forEach(record => {
+        data.push([
+            record.firstName, record.phoneNumber, record.altPhoneNumber, record.email,
+            record.address, record.googleLocation, record.rentSale, record.fromDate,
+            record.toDate, record.equipment, record.serialNumber, record.deliveryDate,
+            record.price, record.transportPrice, record.totalPrice, record.notes
+        ]);
+    });
+
+    const worksheet = XLSX.utils.aoa_to_sheet(data);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Records');
+
+    XLSX.writeFile(workbook, 'All_Records.xlsx');
+}
+
+    
+        // View a record in an alert box
+        function viewRecord(index) {
+            const record = records[index];
+            alert(`
+                First Name: ${record.firstName}
+                Phone Number: ${record.phoneNumber}
+                Alt Phone Number: ${record.altPhoneNumber}
+                Email: ${record.email}
+                Address: ${record.address}
+                Google Location: ${record.googleLocation}
+                Rent/Sale: ${record.rentSale}
+                From Date: ${record.fromDate}
+                To Date: ${record.toDate}
+                Equipment: ${record.equipment}
+                Serial Number: ${record.serialNumber}
+                Delivery Date: ${record.deliveryDate}
+                Price: ${record.price}
+                Transport Price: ${record.transportPrice}
+                Total Price: ${record.totalPrice}
+                Notes: ${record.notes}
+            `);
+        }
+    
+        // Handle form submission
+        document.getElementById('newRecordForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // Prevent default form submission
+    
+            // Validate required fields
+            const requiredFields = ['firstName', 'phoneNumber', 'address', 'googleLocation', 'equipment', 'serialNumber', 'price', 'transportPrice'];
+            let valid = true;
+            let firstInvalidField = null;
+    
+            requiredFields.forEach(id => {
+                const field = document.getElementById(id);
+                if (!field.value.trim()) {
+                    field.classList.add('highlight');
+                    if (!firstInvalidField) firstInvalidField = field;
+                    valid = false;
+                } else {
+                    field.classList.remove('highlight');
+                }
+            });
+    
+            // Validate date ranges
+            const fromDate = new Date(document.getElementById('fromDate').value);
+            const toDate = new Date(document.getElementById('toDate').value);
+            const deliveryDate = new Date(document.getElementById('deliveryDate').value);
+    
+            if (fromDate > toDate) {
+                alert("From Date must be before To Date.");
+                valid = false;
+            }
+            if (deliveryDate && (fromDate - deliveryDate) > (7 * 24 * 60 * 60 * 1000)) {
+                alert("Delivery Date cannot be more than 7 days before From Date.");
+                valid = false;
+            }
+    
+            if (!valid) {
+                firstInvalidField.focus();
+                return; // Exit if validation fails
+            }
+    
+            // Create new record and add to local storage
+            const newRecord = {
+                firstName: document.getElementById('firstName').value,
+                phoneNumber: document.getElementById('phoneNumber').value,
+                altPhoneNumber: document.getElementById('altPhoneNumber').value,
+                email: document.getElementById('email').value,
+                address: document.getElementById('address').value,
+                googleLocation: document.getElementById('googleLocation').value,
+                rentSale: document.querySelector('input[name="rentSale"]:checked').value,
+                fromDate: document.getElementById('fromDate').value,
+                toDate: document.getElementById('toDate').value,
+                equipment: document.getElementById('equipment').value,
+                serialNumber: document.getElementById('serialNumber').value,
+                deliveryDate: document.getElementById('deliveryDate').value,
+                price: document.getElementById('price').value,
+                transportPrice: document.getElementById('transportPrice').value,
+                totalPrice: document.getElementById('totalPrice').value,
+                notes: document.getElementById('notes').value
+            };
+    
+            records.push(newRecord);
+            localStorage.setItem('records', JSON.stringify(records)); // Save to local storage
+            populateTable(); // Re-populate the table
+            cancelForm(); // Hide the form
+        });
+    
+        // Initial population of the table
+        populateTable();
+    </script>
+    
+
+</body>
+</html>

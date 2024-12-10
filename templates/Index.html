@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Registration</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #333;
+            overflow: hidden;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .form-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80%;
+            height: 80%;
+        }
+
+        .form-wrapper {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .form-section {
+            width: 50%;
+            height: 100%;
+            padding: 20px;
+            border-radius: 8px;
+            position: absolute;
+            top: 0;
+            transition: all 0.5s ease;
+            background-color: white;
+        }
+
+        .form-section h3 {
+            text-align: center;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        label {
+            font-size: 14px;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        input[type="text"], input[type="email"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+            position: relative;
+            z-index: 1;
+            right: 5px; /* Moves input a couple pixels to the right */
+        }
+
+        input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus {
+            background-color: #e7f1ff;
+            outline: none;
+        }
+
+        input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            background-color: #45a049; /* Slightly darker */
+        }
+
+        .blurred {
+            filter: blur(4px);
+            pointer-events: none;
+        }
+
+        .blue-background {
+            background-color: #4CAF50;
+            color: white;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .active-section {
+            z-index: 1;
+            position: relative;
+        }
+
+        .inactive-section {
+            z-index: 0;
+            position: absolute;
+            background-color: white;
+        }
+
+        /* Background animation for active form */
+        @keyframes background-rise {
+            0% {
+                background-color: white;
+                height: 0%;
+            }
+            100% {
+                background-color: #4CAF50;
+                height: 100%;
+            }
+        }
+
+        .background-animation {
+            animation: background-rise 1s ease-in-out forwards;
+        }
+
+        .water-wave {
+            animation: wave 0.5s ease-in-out;
+        }
+
+        @keyframes wave {
+            0% {
+                transform: scale(1);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Prevent form switch when clicking inside the form */
+        .form-section {
+            pointer-events: auto;
+        }
+
+        .form-wrapper {
+            pointer-events: none;
+        }
+
+        .form-section.active-section {
+            pointer-events: auto;
+        }
+
+        /* New fill animation to change background from green to white */
+        @keyframes fill-to-white {
+            0% {
+                background-color: #4CAF50;
+            }
+            100% {
+                background-color: white;
+            }
+        }
+
+        .fill-animation {
+            animation: fill-to-white 1s ease-in-out forwards;
+        }
+
+    </style>
+</head>
+<body>
+    <h2>Login & Registration</h2>
+
+    <div class="form-container">
+        <div class="form-wrapper">
+            <div id="register-form" class="form-section active-section">
+                <h3>Register</h3>
+                <form action="/register" method="post">
+                    <label>Name:</label><br>
+                    <input type="text" name="name" required><br>
+                    <label>Phone Number:</label><br>
+                    <input type="text" name="phone" required><br>
+                    <label>Email:</label><br>
+                    <input type="email" name="email" required><br>
+                    <label>Location:</label><br>
+                    <input type="text" name="location" required><br>
+                    <input type="submit" value="Register">
+                </form>
+            </div>
+
+            <div id="login-form" class="form-section blurred inactive-section">
+                <h3>Login</h3>
+                <form action="/login" method="post">
+                    <label>Email or Username:</label><br>
+                    <input type="text" name="email_or_username" required><br>
+                    <label>Password:</label><br>
+                    <input type="password" name="password" required><br>
+                    <input type="submit" value="Login">
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add event listeners to toggle between Register and Login forms
+        const registerForm = document.getElementById('register-form');
+        const loginForm = document.getElementById('login-form');
+
+        function switchForm() {
+            // Switch active form and inactive form styles
+            if (registerForm.classList.contains('active-section')) {
+                registerForm.classList.remove('active-section');
+                registerForm.classList.add('inactive-section', 'blurred');
+                loginForm.classList.remove('blurred', 'inactive-section');
+                loginForm.classList.add('active-section', 'background-animation');
+            } else {
+                loginForm.classList.remove('active-section');
+                loginForm.classList.add('inactive-section', 'blurred');
+                registerForm.classList.remove('blurred', 'inactive-section');
+                registerForm.classList.add('active-section', 'background-animation');
+            }
+
+            // Check if the form is filled with green and trigger the fill-to-white animation
+            if (loginForm.classList.contains('inactive-section') && loginForm.style.backgroundColor === 'rgb(76, 175, 80)') {
+                loginForm.classList.add('fill-animation');
+            }
+            if (registerForm.classList.contains('inactive-section') && registerForm.style.backgroundColor === 'rgb(76, 175, 80)') {
+                registerForm.classList.add('fill-animation');
+            }
+
+            // Reset the unselected form background to white
+            if (loginForm.classList.contains('inactive-section')) {
+                loginForm.style.backgroundColor = "white";
+            }
+            if (registerForm.classList.contains('inactive-section')) {
+                registerForm.style.backgroundColor = "white";
+            }
+        }
+
+        // Switch forms when clicking on either form section
+        registerForm.addEventListener('click', switchForm);
+        loginForm.addEventListener('click', switchForm);
+    </script>
+</body>
+</html>
